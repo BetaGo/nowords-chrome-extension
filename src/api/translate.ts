@@ -1,1 +1,1 @@
-export {};
+export { bingTranslate } from "./bing";

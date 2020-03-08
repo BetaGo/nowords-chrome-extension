@@ -14,7 +14,7 @@ interface IWordAdvancedMean {
 
 interface IWordCollocation {
   label: string;
-  content: string;
+  content: string[];
 }
 
 interface IWordSynonym {
@@ -27,29 +27,44 @@ interface IWordAntonym {
   content: string[];
 }
 
+interface IPhonetic {
+  text: string;
+  mediaUrl?: string;
+}
+
 export class Word {
+  constructor(text: string) {
+    this.text = text;
+  }
   /**
    * 单词
    */
-  name: string;
+  text: string;
+  /**
+   * 音标
+   */
+  phonetic: {
+    en?: IPhonetic;
+    us?: IPhonetic;
+  } = {};
   /**
    * 单词释义
    */
-  means: IWordMean[];
+  means: IWordMean[] = [];
   /**
    * 搭配
    */
-  collocation: IWordCollocation[];
+  collocation: IWordCollocation[] = [];
   /**
    * 同义词
    */
-  synonym: IWordSynonym[];
+  synonym: IWordSynonym[] = [];
   /**
    * 反义词
    */
-  antonym: IWordAntonym[];
+  antonym: IWordAntonym[] = [];
   /**
    * 详细释义
    */
-  advancedMeans: IWordAdvancedMean[];
+  advancedMeans: IWordAdvancedMean[] = [];
 }
