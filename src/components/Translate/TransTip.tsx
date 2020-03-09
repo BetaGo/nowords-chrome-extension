@@ -29,12 +29,22 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
           top,
           left
         }}
-        className={styles.root}
+        className={styles.tip}
         src={chrome.runtime.getURL(translateIcon)}
         alt="translate icon"
         onClick={() => setContentVisible(true)}
       ></img>
-      {contentVisible ? <TransContent text={text} /> : null}
+      {contentVisible ? (
+        <div
+          className={styles.content}
+          style={{
+            top,
+            left: left + 30
+          }}
+        >
+          <TransContent text={text} />
+        </div>
+      ) : null}
     </>
   );
 };

@@ -52,6 +52,4 @@ const onMouseUp = (e: MouseEvent) => {
   }
 };
 
-console.log("==== head", document.head);
-
 document.addEventListener("mouseup", onMouseUp);

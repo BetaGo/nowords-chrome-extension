@@ -1,4 +1,4 @@
-.root {
+.tip {
   position: fixed;
   display: box;
   box-sizing: border-box;
@@ -9,4 +9,16 @@
   height: 28px;
   background-color: pink;
   cursor: pointer;
+}
+
+.content {
+  position: fixed;
+  display: box;
+  box-sizing: border-box;
+  padding: 3px;
+  z-index: 2147483647;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 2px;
+  box-shadow: #ccc 2px 2px 2px;
 }
