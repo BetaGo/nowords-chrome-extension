@@ -4,12 +4,14 @@ import {
   FocusTrapCallout,
   Stack,
   FocusZone,
-  PrimaryButton
+  PrimaryButton,
+  Spinner
 } from "office-ui-fabric-react";
 import translateIcon from "./Translate.svg";
 import TransContent from "./TransContent";
 
 import styles from "./TransTip.module.scss";
+import { useBingTranslate } from "../../hooks/translate/useBingTranslate";
 
 interface ITranslateTipProps {
   top: number;
@@ -18,23 +20,31 @@ interface ITranslateTipProps {
 }
 
 const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
-  const [contentVisible, setContentVisible] = React.useState(false);
+  const { word, loading, reFetch } = useBingTranslate(text, false);
   const imgRef = React.useRef<HTMLImageElement>(null);
-  console.log("contentVisible", contentVisible);
   return (
     <>
-      <img
-        ref={imgRef}
+      <div
         style={{
           top,
           left
         }}
         className={styles.tip}
-        src={chrome.runtime.getURL(translateIcon)}
-        alt="translate icon"
-        onClick={() => setContentVisible(true)}
-      ></img>
-      {contentVisible ? (
+        onClick={() => {
+          !loading && reFetch();
+        }}
+      >
+        {loading ? (
+          <Spinner />
+        ) : (
+          <img
+            ref={imgRef}
+            src={chrome.runtime.getURL(translateIcon)}
+            alt="translate icon"
+          ></img>
+        )}
+      </div>
+      {word ? (
         <div
           className={styles.content}
           style={{
@@ -42,7 +52,7 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
             left: left + 30
           }}
         >
-          <TransContent text={text} />
+          <TransContent word={word} />
         </div>
       ) : null}
     </>

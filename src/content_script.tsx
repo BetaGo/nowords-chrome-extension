@@ -1,8 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import _ from "lodash";
+import { initializeIcons } from "@uifabric/icons";
 
 import TransTip from "./components/Translate/TransTip";
+
+initializeIcons(chrome.runtime.getURL("/fonts"));
 
 const INJECT_ELEMENT_ID = "___NO__WORLD___";
 
