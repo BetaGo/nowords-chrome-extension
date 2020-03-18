@@ -1,9 +1,11 @@
 export enum MessageType {
-  translateWord
+  translateWord,
+  playAudio
 }
 
-export class Message<T = {}> {
-  constructor(public type: MessageType, public payload: T) {}
+export interface IMessage<T = {}> {
+  type: MessageType;
+  payload: T;
 }
 
 export class FetchMessageResponse<T = {}> {

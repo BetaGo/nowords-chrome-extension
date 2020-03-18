@@ -5,7 +5,7 @@ import { initializeIcons } from "@uifabric/icons";
 
 import TransTip from "./components/Translate/TransTip";
 
-initializeIcons(chrome.runtime.getURL("/fonts"));
+initializeIcons(chrome.runtime.getURL("/fonts/"));
 
 const INJECT_ELEMENT_ID = "___NO__WORLD___";
 

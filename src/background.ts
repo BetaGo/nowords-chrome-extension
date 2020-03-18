@@ -3,15 +3,24 @@ import { bingTranslate } from "./api/translate";
 import { Word } from "./api/word";
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === MessageType.translateWord) {
-    console.log("message", message);
-    bingTranslate(message.payload).then(res => {
-      console.log("res", res);
-      sendResponse(new FetchMessageResponse<Word>(true, res));
-    }).catch(e => {
-      sendResponse(new FetchMessageResponse(false, e))
-    });
-    return true;
+  switch (message.type) {
+    case MessageType.translateWord: {
+      bingTranslate(message.payload)
+        .then(res => {
+          sendResponse(new FetchMessageResponse<Word>(true, res));
+        })
+        .catch(e => {
+          sendResponse(new FetchMessageResponse(false, e));
+        });
+      return true;
+    }
+    case MessageType.playAudio: {
+      var audio = new Audio(message.payload);
+      audio.play();
+      return;
+    }
+    default:
+      break;
   }
 });
 

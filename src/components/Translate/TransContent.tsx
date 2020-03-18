@@ -1,10 +1,18 @@
 import React from "react";
-import { Text } from "office-ui-fabric-react";
+import { Text, Icon } from "office-ui-fabric-react";
 
 import { Word } from "../../api/word";
 import styles from "./TransContent.module.scss";
+import { MessageType } from "../../common/Message";
 
 const TransContent: React.FC<{ word: Word }> = ({ word }) => {
+  const playWordAudio = (audioUrl: string) => {
+    chrome.runtime.sendMessage({
+      type: MessageType.playAudio,
+      payload: audioUrl
+    });
+  };
+
   if (!word.means.length) {
     return <div className={styles.root}>对不起,没有查到相关翻译.</div>;
   }
@@ -16,12 +24,26 @@ const TransContent: React.FC<{ word: Word }> = ({ word }) => {
           <Text block variant="medium">
             <span>EN:</span>
             {word.phonetic.en.text && <span>【{word.phonetic.en.text}】</span>}
+            {word.phonetic.en.mediaUrl && (
+              <Icon
+                className={styles.voice}
+                iconName="Volume2"
+                onClick={() => playWordAudio(word.phonetic.en!.mediaUrl!)}
+              />
+            )}
           </Text>
         )}
         {word.phonetic.us && (
           <Text block variant="medium">
             <span>US:</span>
             {word.phonetic.us.text && <span>【{word.phonetic.us.text}】</span>}
+            {word.phonetic.us.mediaUrl && (
+              <Icon
+                className={styles.voice}
+                iconName="Volume2"
+                onClick={() => playWordAudio(word.phonetic.us!.mediaUrl!)}
+              />
+            )}
           </Text>
         )}
       </div>

@@ -111,5 +111,3 @@ export const bingPageParse = (html: string): Word => {
 
   return word;
 };
-
-bingTranslate("hello");
