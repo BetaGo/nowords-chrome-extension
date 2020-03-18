@@ -1,17 +1,10 @@
+import { Callout, Spinner } from "office-ui-fabric-react";
 import React from "react";
-import {
-  DefaultButton,
-  FocusTrapCallout,
-  Stack,
-  FocusZone,
-  PrimaryButton,
-  Spinner
-} from "office-ui-fabric-react";
-import translateIcon from "./Translate.svg";
-import TransContent from "./TransContent";
 
-import styles from "./TransTip.module.scss";
 import { useBingTranslate } from "../../hooks/translate/useBingTranslate";
+import TransContent from "./TransContent";
+import translateIcon from "./Translate.svg";
+import styles from "./TransTip.module.scss";
 
 interface ITranslateTipProps {
   top: number;
@@ -21,6 +14,7 @@ interface ITranslateTipProps {
 
 const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
   const { word, loading, reFetch } = useBingTranslate(text, false);
+  const [visible, setVisible] = React.useState<boolean>(false);
   const imgRef = React.useRef<HTMLImageElement>(null);
   return (
     <>
@@ -32,6 +26,7 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
         className={styles.tip}
         onClick={() => {
           !loading && reFetch();
+          !visible && setVisible(true);
         }}
       >
         {loading ? (
@@ -44,16 +39,16 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
           ></img>
         )}
       </div>
-      {word ? (
-        <div
-          className={styles.content}
-          style={{
-            top,
-            left: left + 30
-          }}
+      {word && visible && !loading ? (
+        <Callout
+          className={styles.callout}
+          role="translate dialog"
+          gapSpace={10}
+          target={imgRef.current}
+          onDismiss={() => setVisible(false)}
         >
           <TransContent word={word} />
-        </div>
+        </Callout>
       ) : null}
     </>
   );

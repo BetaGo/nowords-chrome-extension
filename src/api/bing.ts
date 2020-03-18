@@ -7,41 +7,55 @@ export const bingTranslate = async (text: string): Promise<Word> => {
   const res = await axios.get(
     "https://cn.bing.com/dict/search?q=" + encodeURIComponent(text)
   );
-  return bingPageParse(text, res.data);
+  return bingPageParse(res.data);
 };
 
-export const bingPageParse = (text: string, html: string): Word => {
+export const bingPageParse = (html: string): Word => {
   console.log("html: ", html);
   let $ = cheerio.load(html);
-  let word = new Word(text);
+  const wordText = $("#headword").text();
+  let word = new Word(wordText);
 
-  word.phonetic.us = {
-    text: $(".hd_prUS")
-      .text()
-      .split(/\s/)[1]
-      ?.replace("[", "")
-      .replace("]", "")
-      .trim()
-  };
-  word.phonetic.en = {
-    text: $(".hd_pr")
-      .text()
-      .split(/\s/)[1]
-      ?.replace("[", "")
-      .replace("]", "")
-      .trim()
-  };
+  const usPhoneticText = $(".hd_prUS")
+    .text()
+    .split(/\s/)[1]
+    ?.replace("[", "")
+    .replace("]", "")
+    .trim();
+
+  const enPhoneticText = $(".hd_pr")
+    .text()
+    .split(/\s/)[1]
+    ?.replace("[", "")
+    .replace("]", "")
+    .trim();
+
+  let usPhoneticMediaUrl: string | undefined;
+  let enPhoneticMediaUrl: string | undefined;
 
   $(".hd_tf > .bigaud").each((index, element) => {
     let onClickAttr = $(element).attr("onclick") || "";
     let mediaUrl = urlRegExp.exec(onClickAttr)?.[0];
-    if (index === 0 && word.phonetic.us) {
-      word.phonetic.us.mediaUrl = mediaUrl;
+    if (index === 0) {
+      usPhoneticMediaUrl = mediaUrl;
     }
-    if (index === 1 && word.phonetic.en) {
-      word.phonetic.en.mediaUrl = mediaUrl;
+    if (index === 1) {
+      enPhoneticMediaUrl = mediaUrl;
     }
   });
+
+  if (usPhoneticText || usPhoneticMediaUrl) {
+    word.phonetic.us = {
+      text: usPhoneticText,
+      mediaUrl: usPhoneticMediaUrl
+    };
+  }
+  if (enPhoneticText || enPhoneticMediaUrl) {
+    word.phonetic.en = {
+      text: enPhoneticText,
+      mediaUrl: enPhoneticMediaUrl
+    };
+  }
 
   $(".qdef > ul > li").each((index, element) => {
     word.means.push({
