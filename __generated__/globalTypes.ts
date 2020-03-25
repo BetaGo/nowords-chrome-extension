@@ -7,6 +7,16 @@
 // START Enums and Input Objects
 //==============================================================
 
+export interface RefreshTokenInput {
+  refreshToken: string;
+  accessToken: string;
+}
+
+export interface UserLoginInput {
+  account: string;
+  password: string;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
