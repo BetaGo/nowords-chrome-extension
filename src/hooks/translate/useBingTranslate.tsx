@@ -1,10 +1,7 @@
 import React from "react";
+
+import { bingTranslate } from "../../api/translate";
 import { Word } from "../../api/word";
-import {
-  IMessage,
-  MessageType,
-  FetchMessageResponse
-} from "../../common/Message";
 
 /**
  *
@@ -18,20 +15,16 @@ export const useBingTranslate = (text: string, autoFetch = true) => {
 
   const fetchData = React.useCallback(() => {
     setLoading(true);
-    const message: IMessage = {
-      type: MessageType.translateWord,
-      payload: text
-    };
-    chrome.runtime.sendMessage(message, function(
-      response: FetchMessageResponse<Word>
-    ) {
-      setLoading(false);
-      if (response.success) {
-        setWord(response.data);
-      } else {
-        setError(response.data);
-      }
-    });
+    bingTranslate(text)
+      .then(word => {
+        setWord(word);
+      })
+      .catch(e => {
+        setError(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [text]);
 
   React.useEffect(() => {

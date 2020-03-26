@@ -4,16 +4,13 @@ import jwtDecode from "jwt-decode";
 import { RefreshTokenInput } from "../../__generated__/globalTypes";
 import { IJwtTokenObj } from "../types";
 import { RefreshToken_refreshToken } from "./__generated__/RefreshToken";
-import { fetch } from "./fetch";
 
 export const client = new ApolloClient({
-  uri: process.env.REACT_APP_GRAPHQL_HTTP_URI,
-  fetch
+  uri: process.env.REACT_APP_GRAPHQL_HTTP_URI
 });
 
 export const authorizedClient = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_HTTP_URI,
-  fetch,
   request: async operation => {
     const tokens = await new Promise<any>(resolve => {
       chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, function(

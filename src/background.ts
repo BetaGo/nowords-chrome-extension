@@ -1,27 +1,31 @@
-import { MessageType, FetchMessageResponse, IMessage } from "./common/Message";
-import { bingTranslate } from "./api/translate";
-import { Word } from "./api/word";
+import { IMessage, MessageType } from "./common/Message";
 
 chrome.runtime.onMessage.addListener(
   (message: IMessage<any>, sender, sendResponse) => {
     switch (message.type) {
-      case MessageType.translateWord: {
-        bingTranslate(message.payload)
-          .then(res => {
-            sendResponse(new FetchMessageResponse<Word>(true, res));
-          })
-          .catch(e => {
-            sendResponse(new FetchMessageResponse(false, e));
-          });
-        return true;
-      }
       case MessageType.playAudio: {
         const audio = new Audio(message.payload);
         audio.play();
         return;
       }
       case MessageType.fetch: {
-        sendResponse(fetch(message.payload.input, message.payload.init));
+        const { resType, ...init } = message.payload;
+        fetch(message.payload.input, init)
+          .then(res => {
+            switch (resType) {
+              case "json":
+                return res.json();
+              case "blob":
+                return res.blob();
+              case "text":
+                return res.text();
+              default:
+                return res.text();
+            }
+          })
+          .then(d => {
+            sendResponse(d);
+          });
         return true;
       }
       default:

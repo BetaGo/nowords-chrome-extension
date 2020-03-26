@@ -1,9 +1,11 @@
 import { IMessage, MessageType } from "./Message";
 
-export const fetch = (
+export function simpleFetch<T = any>(
   input: RequestInfo,
-  init?: RequestInit
-): Promise<Response> => {
+  init: RequestInit & {
+    resType: "blob" | "json" | "text";
+  }
+): Promise<T> {
   const message: IMessage = {
     type: MessageType.fetch,
     payload: {
@@ -16,4 +18,4 @@ export const fetch = (
       resolve(res);
     });
   });
-};
+}
