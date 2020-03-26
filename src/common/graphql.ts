@@ -1,21 +1,24 @@
-import ApolloClient from "apollo-boost";
-import jwtDecode from 'jwt-decode';
-import { gql } from "apollo-boost";
+import ApolloClient, { gql } from "apollo-boost";
+import jwtDecode from "jwt-decode";
 
+import { RefreshTokenInput } from "../../__generated__/globalTypes";
 import { IJwtTokenObj } from "../types";
 import { RefreshToken_refreshToken } from "./__generated__/RefreshToken";
-import { RefreshTokenInput } from "../../__generated__/globalTypes";
+import { fetch } from "./fetch";
 
 export const client = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_HTTP_URI,
+  fetch
 });
-
 
 export const authorizedClient = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_HTTP_URI,
+  fetch,
   request: async operation => {
     const tokens = await new Promise<any>(resolve => {
-      chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, function(items) {
+      chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, function(
+        items
+      ) {
         resolve(items);
       });
     });
@@ -27,12 +30,13 @@ export const authorizedClient = new ApolloClient({
       const decodedRefreshToken = jwtDecode<IJwtTokenObj>(refreshToken);
 
       if (decodedAccessToken.exp > now && decodedRefreshToken.exp < now) {
-        const res = await client.query<RefreshToken_refreshToken, RefreshTokenInput>({
+        const res = await client.query<
+          RefreshToken_refreshToken,
+          RefreshTokenInput
+        >({
           query: gql`
             query RefreshToken($input: RefreshTokenInput) {
-              refreshToken(
-                input: $input
-              ) {
+              refreshToken(input: $input) {
                 accessToken
                 refreshToken
               }
@@ -48,7 +52,7 @@ export const authorizedClient = new ApolloClient({
         chrome.storage.sync.set({
           accessToken,
           refreshToken
-        })
+        });
       }
     }
 

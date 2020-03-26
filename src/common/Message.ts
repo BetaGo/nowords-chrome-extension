@@ -1,6 +1,7 @@
 export enum MessageType {
   translateWord,
-  playAudio
+  playAudio,
+  fetch
 }
 
 export interface IMessage<T = {}> {
