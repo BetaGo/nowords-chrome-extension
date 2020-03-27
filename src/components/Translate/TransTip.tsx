@@ -15,7 +15,7 @@ interface ITranslateTipProps {
 const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
   const { word, loading, reFetch } = useBingTranslate(text, false);
   const [visible, setVisible] = React.useState<boolean>(false);
-  const imgRef = React.useRef<HTMLImageElement>(null);
+  const tipRef = React.useRef<HTMLDivElement>(null);
   return (
     <>
       <div
@@ -23,6 +23,7 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
           top,
           left
         }}
+        ref={tipRef}
         className={styles.tip}
         onClick={() => {
           !loading && reFetch();
@@ -33,7 +34,6 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
           <Spinner />
         ) : (
           <img
-            ref={imgRef}
             src={chrome.runtime.getURL(translateIcon)}
             alt="translate icon"
           ></img>
@@ -44,7 +44,7 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
           className={styles.callout}
           role="translate dialog"
           gapSpace={10}
-          target={imgRef.current}
+          target={tipRef.current}
           onDismiss={() => setVisible(false)}
         >
           <TransContent word={word} />
