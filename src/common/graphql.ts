@@ -1,8 +1,10 @@
 import ApolloClient from "apollo-boost";
 import jwtDecode from "jwt-decode";
 
-import { RefreshTokenInput } from "../../__generated__/globalTypes";
-import { RefreshToken_refreshToken } from "../graphql/__generated__/RefreshToken";
+import {
+  RefreshToken,
+  RefreshTokenVariables
+} from "../graphql/__generated__/RefreshToken";
 import { REFRESH_TOKEN } from "../graphql/queries";
 import { IJwtTokenObj } from "../types";
 
@@ -27,19 +29,18 @@ export const authorizedClient = new ApolloClient({
       const decodedAccessToken = jwtDecode<IJwtTokenObj>(accessToken);
       const decodedRefreshToken = jwtDecode<IJwtTokenObj>(refreshToken);
 
-      if (decodedAccessToken.exp > now && decodedRefreshToken.exp < now) {
-        const res = await client.query<
-          RefreshToken_refreshToken,
-          RefreshTokenInput
-        >({
+      if (decodedAccessToken.exp < now && decodedRefreshToken.exp > now) {
+        const res = await client.query<RefreshToken, RefreshTokenVariables>({
           query: REFRESH_TOKEN,
           variables: {
-            accessToken,
-            refreshToken
+            input: {
+              accessToken,
+              refreshToken
+            }
           }
         });
-        accessToken = res.data.accessToken;
-        refreshToken = res.data.refreshToken;
+        accessToken = res.data.refreshToken?.accessToken;
+        refreshToken = res.data.refreshToken?.refreshToken;
         chrome.storage.sync.set({
           accessToken,
           refreshToken

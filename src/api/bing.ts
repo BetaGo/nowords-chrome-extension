@@ -16,7 +16,6 @@ export const bingTranslate = async (text: string): Promise<Word> => {
 };
 
 export const bingPageParse = (html: string): Word => {
-  console.log("html: ", html);
   let $ = cheerio.load(html);
   const wordText = $("#headword").text();
   let word = new Word(wordText);

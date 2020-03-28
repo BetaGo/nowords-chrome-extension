@@ -5,7 +5,7 @@ import { initializeIcons } from "@uifabric/icons";
 
 import TransTip from "./components/Translate/TransTip";
 import { ApolloProvider } from "@apollo/react-hooks";
-import { client } from "./common/graphql";
+import { authorizedClient } from "./common/graphql";
 
 initializeIcons(chrome.runtime.getURL("/fonts/"));
 
@@ -47,7 +47,7 @@ const injectElement = (top: number, left: number) => {
   }
 
   ReactDOM.render(
-    <ApolloProvider client={client}>
+    <ApolloProvider client={authorizedClient}>
       <TransTip top={top} left={left} text={text} />
     </ApolloProvider>,
     el

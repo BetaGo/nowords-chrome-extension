@@ -2,6 +2,7 @@ import { JSEncrypt } from "jsencrypt";
 import {
   DefaultButton,
   PrimaryButton,
+  Separator,
   Stack,
   Text,
   TextField
@@ -9,10 +10,12 @@ import {
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { UserLoginInput } from "../../../__generated__/globalTypes";
 import { client } from "../../common/graphql";
 import { LoginToken_loginToken } from "../../graphql/__generated__/LoginToken";
-import { UserLogin_userLogin } from "../../graphql/__generated__/UserLogin";
+import {
+  UserLogin,
+  UserLoginVariables
+} from "../../graphql/__generated__/UserLogin";
 import { LOGIN_TOKEN, USER_LOGIN } from "../../graphql/queries";
 import styles from "./Login.module.scss";
 
@@ -22,6 +25,14 @@ interface ILoginInput {
 }
 
 const encrypt = new JSEncrypt();
+
+const thirdPartLogin = (type: string) => {
+  window.location.replace(
+    `${
+      process.env.REACT_APP_AUTH_URL
+    }?type=${type}&redirectUrl=${encodeURIComponent(window.location.href)}`
+  );
+};
 
 const Login = () => {
   const { handleSubmit, control } = useForm<ILoginInput>();
@@ -36,17 +47,24 @@ const Login = () => {
         text: data.password
       })
     );
-    const loginRes = await client.query<UserLogin_userLogin, UserLoginInput>({
+    const loginRes = await client.query<UserLogin, UserLoginVariables>({
       query: USER_LOGIN,
       variables: {
-        account: data.account,
-        password: encryptedPassword
+        input: {
+          account: data.account,
+          password: encryptedPassword
+        }
       }
     });
-    chrome.storage.sync.set({
-      accessToken: loginRes.data.accessToken,
-      refreshToken: loginRes.data.refreshToken
-    });
+    chrome.storage.sync.set(
+      {
+        accessToken: loginRes.data.userLogin?.accessToken,
+        refreshToken: loginRes.data.userLogin?.refreshToken
+      },
+      () => {
+        window.location.reload(false);
+      }
+    );
   };
 
   return (
@@ -77,6 +95,10 @@ const Login = () => {
           <DefaultButton>注册</DefaultButton>
         </Stack>
       </form>
+      <Separator>第三方账号登录</Separator>
+      <div>
+        <button onClick={() => thirdPartLogin("github")}>github</button>
+      </div>
     </div>
   );
 };
