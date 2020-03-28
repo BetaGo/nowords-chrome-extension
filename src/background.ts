@@ -28,6 +28,10 @@ chrome.runtime.onMessage.addListener(
           });
         return true;
       }
+      case MessageType.openOptionsPage: {
+        chrome.runtime.openOptionsPage();
+        return;
+      }
       default:
         break;
     }

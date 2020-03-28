@@ -1,12 +1,12 @@
 export enum MessageType {
-  translateWord,
   playAudio,
-  fetch
+  fetch,
+  openOptionsPage
 }
 
 export interface IMessage<T = {}> {
   type: MessageType;
-  payload: T;
+  payload?: T;
 }
 
 export class FetchMessageResponse<T = {}> {

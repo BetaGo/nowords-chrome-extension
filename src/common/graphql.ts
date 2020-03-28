@@ -1,9 +1,10 @@
-import ApolloClient, { gql } from "apollo-boost";
+import ApolloClient from "apollo-boost";
 import jwtDecode from "jwt-decode";
 
 import { RefreshTokenInput } from "../../__generated__/globalTypes";
+import { RefreshToken_refreshToken } from "../graphql/__generated__/RefreshToken";
+import { REFRESH_TOKEN } from "../graphql/queries";
 import { IJwtTokenObj } from "../types";
-import { RefreshToken_refreshToken } from "./__generated__/RefreshToken";
 
 export const client = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_HTTP_URI
@@ -31,14 +32,7 @@ export const authorizedClient = new ApolloClient({
           RefreshToken_refreshToken,
           RefreshTokenInput
         >({
-          query: gql`
-            query RefreshToken($input: RefreshTokenInput) {
-              refreshToken(input: $input) {
-                accessToken
-                refreshToken
-              }
-            }
-          `,
+          query: REFRESH_TOKEN,
           variables: {
             accessToken,
             refreshToken

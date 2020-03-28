@@ -5,7 +5,13 @@
   max-height: 600px;
   overflow: auto;
 
-  .voice {
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .pointer {
     cursor: pointer;
   }
 

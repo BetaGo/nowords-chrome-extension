@@ -4,6 +4,8 @@ import _ from "lodash";
 import { initializeIcons } from "@uifabric/icons";
 
 import TransTip from "./components/Translate/TransTip";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { client } from "./common/graphql";
 
 initializeIcons(chrome.runtime.getURL("/fonts/"));
 
@@ -27,9 +29,13 @@ const injectElement = (top: number, left: number) => {
     return;
   }
 
-  if (el && el.getAttribute("data-text") !== text) {
-    el.remove();
-    el = null;
+  if (el) {
+    if (el.getAttribute("data-text") !== text) {
+      el.remove();
+      el = null;
+    } else {
+      return;
+    }
   }
 
   if (!el) {
@@ -40,7 +46,12 @@ const injectElement = (top: number, left: number) => {
     document.body.appendChild(el);
   }
 
-  ReactDOM.render(<TransTip top={top} left={left} text={text} />, el);
+  ReactDOM.render(
+    <ApolloProvider client={client}>
+      <TransTip top={top} left={left} text={text} />
+    </ApolloProvider>,
+    el
+  );
 };
 
 const onMouseUp = (e: MouseEvent) => {

@@ -7,6 +7,12 @@
 // START Enums and Input Objects
 //==============================================================
 
+export interface AddUserWordInput {
+  word: string;
+  translation?: string | null;
+  example?: string | null;
+}
+
 export interface RefreshTokenInput {
   refreshToken: string;
   accessToken: string;

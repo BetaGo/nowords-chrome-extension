@@ -1,9 +1,10 @@
+import { Icon, Text } from "office-ui-fabric-react";
 import React from "react";
-import { Text, Icon } from "office-ui-fabric-react";
 
 import { Word } from "../../api/word";
-import styles from "./TransContent.module.scss";
 import { MessageType } from "../../common/Message";
+import Operation from "./Operation";
+import styles from "./TransContent.module.scss";
 
 const TransContent: React.FC<{ word: Word }> = ({ word }) => {
   const playWordAudio = (audioUrl: string) => {
@@ -18,7 +19,10 @@ const TransContent: React.FC<{ word: Word }> = ({ word }) => {
   }
   return (
     <div className={styles.root}>
-      <Text variant="xLarge">{word.text}</Text>
+      <div className={styles.header}>
+        <Text variant="xLarge">{word.text}</Text>
+        <Operation word={word.text} />
+      </div>
       <div className={styles.block}>
         {word.phonetic.en && (
           <Text block variant="medium">
@@ -26,7 +30,7 @@ const TransContent: React.FC<{ word: Word }> = ({ word }) => {
             {word.phonetic.en.text && <span>【{word.phonetic.en.text}】</span>}
             {word.phonetic.en.mediaUrl && (
               <Icon
-                className={styles.voice}
+                className={styles.pointer}
                 iconName="Volume2"
                 onClick={() => playWordAudio(word.phonetic.en!.mediaUrl!)}
               />
@@ -39,7 +43,7 @@ const TransContent: React.FC<{ word: Word }> = ({ word }) => {
             {word.phonetic.us.text && <span>【{word.phonetic.us.text}】</span>}
             {word.phonetic.us.mediaUrl && (
               <Icon
-                className={styles.voice}
+                className={styles.pointer}
                 iconName="Volume2"
                 onClick={() => playWordAudio(word.phonetic.us!.mediaUrl!)}
               />

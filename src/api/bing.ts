@@ -1,13 +1,15 @@
 import cheerio from "cheerio";
-import { Word } from "./word";
-import { urlRegExp } from "../common/utils";
+
 import { simpleFetch } from "../common/fetch";
+import { urlRegExp } from "../common/utils";
+import { Word } from "./word";
 
 export const bingTranslate = async (text: string): Promise<Word> => {
   const res = await simpleFetch<string>(
     "https://cn.bing.com/dict/search?q=" + encodeURIComponent(text),
     {
-      resType: "text"
+      resType: "text",
+      credentials: "omit"
     }
   );
   return bingPageParse(res);

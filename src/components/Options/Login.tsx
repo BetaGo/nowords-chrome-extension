@@ -1,21 +1,20 @@
-import React from "react";
-import {
-  Stack,
-  TextField,
-  PrimaryButton,
-  DefaultButton,
-  Text
-} from "office-ui-fabric-react";
-import { gql } from "apollo-boost";
-import { useForm, Controller } from "react-hook-form";
 import { JSEncrypt } from "jsencrypt";
+import {
+  DefaultButton,
+  PrimaryButton,
+  Stack,
+  Text,
+  TextField
+} from "office-ui-fabric-react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import { client } from "../../common/graphql";
-
-import styles from "./Login.module.scss";
-import { LoginToken_loginToken } from "./__generated__/LoginToken";
-import { UserLogin_userLogin } from "./__generated__/UserLogin";
 import { UserLoginInput } from "../../../__generated__/globalTypes";
+import { client } from "../../common/graphql";
+import { LoginToken_loginToken } from "../../graphql/__generated__/LoginToken";
+import { UserLogin_userLogin } from "../../graphql/__generated__/UserLogin";
+import { LOGIN_TOKEN, USER_LOGIN } from "../../graphql/queries";
+import styles from "./Login.module.scss";
 
 interface ILoginInput {
   account: string;
@@ -28,14 +27,7 @@ const Login = () => {
   const { handleSubmit, control } = useForm<ILoginInput>();
   const onSubmit = async (data: ILoginInput) => {
     const tokenRes = await client.query<LoginToken_loginToken>({
-      query: gql`
-        query LoginToken {
-          loginToken {
-            token
-            publicKey
-          }
-        }
-      `
+      query: LOGIN_TOKEN
     });
     encrypt.setPublicKey(tokenRes.data.publicKey);
     const encryptedPassword = encrypt.encrypt(
@@ -45,14 +37,7 @@ const Login = () => {
       })
     );
     const loginRes = await client.query<UserLogin_userLogin, UserLoginInput>({
-      query: gql`
-        query UserLogin($input: UserLoginInput) {
-          userLogin(input: $input) {
-            accessToken
-            refreshToken
-          }
-        }
-      `,
+      query: USER_LOGIN,
       variables: {
         account: data.account,
         password: encryptedPassword
