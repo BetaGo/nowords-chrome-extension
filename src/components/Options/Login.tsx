@@ -9,6 +9,7 @@ import {
 } from "office-ui-fabric-react";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { FaGithub } from "react-icons/fa";
 
 import { client } from "../../common/graphql";
 import { LoginToken_loginToken } from "../../graphql/__generated__/LoginToken";
@@ -96,8 +97,11 @@ const Login = () => {
         </Stack>
       </form>
       <Separator>第三方账号登录</Separator>
-      <div>
-        <button onClick={() => thirdPartLogin("github")}>github</button>
+      <div className={styles.thirdLogin}>
+        <FaGithub
+          className={styles.item}
+          onClick={() => thirdPartLogin("github")}
+        />
       </div>
     </div>
   );

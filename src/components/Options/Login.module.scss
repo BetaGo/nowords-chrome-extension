@@ -1,4 +1,17 @@
 .root {
   max-width: 300px;
   margin: 20px auto;
+
+  .thirdLogin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    font-size: 28px;
+
+    .item {
+      margin: 5px;
+      cursor: pointer;
+    }
+  }
 }
