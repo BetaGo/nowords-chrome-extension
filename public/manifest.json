@@ -22,10 +22,13 @@
       "run_at": "document_end"
     }
   ],
+  "page_action": {
+    "default_popup": "popup.html"
+  },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
   },
-  "permissions": ["<all_urls>", "background", "tabs", "storage"],
+  "permissions": ["<all_urls>", "declarativeContent", "background", "tabs", "storage"],
   "web_accessible_resources": ["images/*", "static/media/*", "static/css/*", "fonts/*"]
 }

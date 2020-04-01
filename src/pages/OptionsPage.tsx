@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSearchParam } from "react-use";
 import Login from "../components/Options/Login";
-import { useLoginStatus } from "../hooks/translate/useLoginStatus";
+import { useLoginStatus } from "../hooks/useLoginStatus";
 
 const OptionsPage = () => {
   const isLogin = useLoginStatus();

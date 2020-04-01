@@ -1,6 +1,6 @@
 import React from "react";
 import { CommandBar, ICommandBarItemProps } from "office-ui-fabric-react";
-import { useLoginStatus } from "../../hooks/translate/useLoginStatus";
+import { useLoginStatus } from "../../hooks/useLoginStatus";
 import { useMutation } from "@apollo/react-hooks";
 import {
   AddNewWord,
