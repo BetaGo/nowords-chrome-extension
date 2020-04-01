@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
   TextField
-} from "office-ui-fabric-react";
+} from "@fluentui/react";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FaGithub } from "react-icons/fa";

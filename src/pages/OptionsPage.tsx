@@ -1,13 +1,26 @@
+import { loadTheme } from "@fluentui/react";
 import React, { useEffect } from "react";
-import { useSearchParam } from "react-use";
+import { useMedia, useSearchParam } from "react-use";
+
 import Login from "../components/Options/Login";
 import { useLoginStatus } from "../hooks/useLoginStatus";
+import { darkTheme } from "../theme/dark";
+import { lightTheme } from "../theme/light";
 
 const OptionsPage = () => {
   const isLogin = useLoginStatus();
 
   const accessToken = useSearchParam("accessToken");
   const refreshToken = useSearchParam("refreshToken");
+  const isDark = useMedia("(prefers-color-scheme: dark)");
+
+  useEffect(() => {
+    if (isDark) {
+      loadTheme(darkTheme);
+    } else {
+      loadTheme(lightTheme);
+    }
+  }, [isDark]);
 
   useEffect(() => {
     if (accessToken && refreshToken) {

@@ -1,5 +1,10 @@
-import { Callout, Spinner } from "office-ui-fabric-react";
-import React from "react";
+import { Callout, Spinner } from "@fluentui/react";
+import React, { useEffect } from "react";
+import { loadTheme } from "@fluentui/react";
+import { useMedia } from "react-use";
+
+import { darkTheme } from "../../theme/dark";
+import { lightTheme } from "../../theme/light";
 
 import { useBingTranslate } from "../../hooks/translate/useBingTranslate";
 import TransContent from "./TransContent";
@@ -16,6 +21,16 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
   const { word, loading, reFetch } = useBingTranslate(text, false);
   const [visible, setVisible] = React.useState<boolean>(false);
   const tipRef = React.useRef<HTMLDivElement>(null);
+  const isDark = useMedia("(prefers-color-scheme: dark)");
+
+  useEffect(() => {
+    if (isDark) {
+      loadTheme(darkTheme);
+    } else {
+      loadTheme(lightTheme);
+    }
+  }, [isDark]);
+
   return (
     <>
       <div

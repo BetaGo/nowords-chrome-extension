@@ -1,4 +1,4 @@
-import { Icon, Text } from "office-ui-fabric-react";
+import { Icon, Text } from "@fluentui/react";
 import React from "react";
 
 import { Word } from "../../api/word";

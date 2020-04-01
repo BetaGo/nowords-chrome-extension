@@ -1,5 +1,5 @@
 import React from "react";
-import { CommandBar, ICommandBarItemProps } from "office-ui-fabric-react";
+import { CommandBar, ICommandBarItemProps } from "@fluentui/react";
 import { useLoginStatus } from "../../hooks/useLoginStatus";
 import { useMutation } from "@apollo/react-hooks";
 import {
