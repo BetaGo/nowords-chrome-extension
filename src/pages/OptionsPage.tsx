@@ -1,4 +1,4 @@
-import { loadTheme } from "@fluentui/react";
+import { classNamesFunction, loadTheme, styled } from "@fluentui/react";
 import React, { useEffect } from "react";
 import { useMedia, useSearchParam } from "react-use";
 
@@ -6,8 +6,12 @@ import Login from "../components/Options/Login";
 import { useLoginStatus } from "../hooks/useLoginStatus";
 import { darkTheme } from "../theme/dark";
 import { lightTheme } from "../theme/light";
+import { styles } from "./Page.styles";
+import { IPageProps, IPageStyleProps, IPageStyles } from "./Page.types";
 
-const OptionsPage = () => {
+const getClassNames = classNamesFunction<IPageStyleProps, IPageStyles>();
+
+const OptionsPage: React.FC<IPageProps> = ({ theme, styles }) => {
   const isLogin = useLoginStatus();
 
   const accessToken = useSearchParam("accessToken");
@@ -36,12 +40,17 @@ const OptionsPage = () => {
     }
   }, [accessToken, refreshToken]);
 
+  const classNames = getClassNames(styles, { theme: theme! });
+
   if (!isLogin) return <Login />;
   return (
-    <div>
-      <div>配置页</div>
+    <div className={classNames.root}>
+      {isLogin ? <div>配置页</div> : <Login />}
     </div>
   );
 };
 
-export default OptionsPage;
+export default styled<IPageProps, IPageStyleProps, IPageStyles>(
+  OptionsPage,
+  styles
+);

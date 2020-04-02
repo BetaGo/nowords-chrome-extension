@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 import { authorizedClient } from "./common/graphql";
 import OptionsPage from "./pages/OptionsPage";
 
+import "./index.css";
+
 const App = () => (
   <ApolloProvider client={authorizedClient}>
     <OptionsPage />
