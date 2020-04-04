@@ -1,24 +1,24 @@
-import { JSEncrypt } from "jsencrypt";
 import {
-  DefaultButton,
-  PrimaryButton,
-  Separator,
-  Stack,
-  Text,
-  TextField
-} from "@fluentui/react";
+  Button,
+  Divider,
+  IconButton,
+  Paper,
+  Typography,
+} from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import GitHubIcon from "@material-ui/icons/GitHub";
+import { JSEncrypt } from "jsencrypt";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FaGithub } from "react-icons/fa";
 
 import { client } from "../../common/graphql";
-import { LoginToken_loginToken } from "../../graphql/__generated__/LoginToken";
+import { LoginToken } from "../../graphql/__generated__/LoginToken";
 import {
   UserLogin,
-  UserLoginVariables
+  UserLoginVariables,
 } from "../../graphql/__generated__/UserLogin";
 import { LOGIN_TOKEN, USER_LOGIN } from "../../graphql/queries";
-import styles from "./Login.module.scss";
 
 interface ILoginInput {
   account: string;
@@ -35,17 +35,46 @@ const thirdPartLogin = (type: string) => {
   );
 };
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: 360,
+      margin: "auto",
+      textAlign: "center",
+      padding: theme.spacing(2),
+
+      "& .MuiDivider-root": {
+        margin: "12px auto",
+      },
+
+      "& .MuiFormControl-root": {
+        margin: "12px auto",
+      },
+
+      "& .MuiButton-fullWidth": {
+        margin: "3px auto",
+      },
+    },
+  })
+);
+
 const Login = () => {
   const { handleSubmit, control } = useForm<ILoginInput>();
+
+  const classes = useStyles();
+
   const onSubmit = async (data: ILoginInput) => {
-    const tokenRes = await client.query<LoginToken_loginToken>({
-      query: LOGIN_TOKEN
+    const tokenRes = await client.query<LoginToken>({
+      query: LOGIN_TOKEN,
     });
-    encrypt.setPublicKey(tokenRes.data.publicKey);
+    if (!tokenRes.data.loginToken) {
+      return;
+    }
+    encrypt.setPublicKey(tokenRes.data.loginToken.publicKey);
     const encryptedPassword = encrypt.encrypt(
       JSON.stringify({
-        token: tokenRes.data.token,
-        text: data.password
+        token: tokenRes.data.loginToken.token,
+        text: data.password,
       })
     );
     const loginRes = await client.query<UserLogin, UserLoginVariables>({
@@ -53,14 +82,14 @@ const Login = () => {
       variables: {
         input: {
           account: data.account,
-          password: encryptedPassword
-        }
-      }
+          password: encryptedPassword,
+        },
+      },
     });
     chrome.storage.sync.set(
       {
         accessToken: loginRes.data.userLogin?.accessToken,
-        refreshToken: loginRes.data.userLogin?.refreshToken
+        refreshToken: loginRes.data.userLogin?.refreshToken,
       },
       () => {
         window.location.reload(false);
@@ -69,41 +98,53 @@ const Login = () => {
   };
 
   return (
-    <div className={styles.root}>
-      <Text variant="xLarge">登录/注册</Text>
+    <Paper className={classes.root}>
+      <Typography variant="h6">登录/注册</Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack tokens={{ childrenGap: 10 }}>
-          <Controller
-            as={TextField}
-            name="account"
-            label="用户名"
-            required
-            control={control}
-            defaultValue=""
-            rules={{ required: true }}
-          />
-          <Controller
-            as={TextField}
-            name="password"
-            label="密码"
-            required
-            type="password"
-            control={control}
-            defaultValue=""
-            rules={{ required: true }}
-          />
-          <PrimaryButton type="submit">登录</PrimaryButton>
-          <DefaultButton>注册</DefaultButton>
-        </Stack>
-      </form>
-      <Separator>第三方账号登录</Separator>
-      <div className={styles.thirdLogin}>
-        <FaGithub
-          className={styles.item}
-          onClick={() => thirdPartLogin("github")}
+        <Controller
+          as={TextField}
+          name="account"
+          label="用户名"
+          required
+          fullWidth
+          variant="outlined"
+          control={control}
+          defaultValue=""
+          rules={{ required: true }}
         />
+        <Controller
+          as={TextField}
+          name="password"
+          label="密码"
+          required
+          fullWidth
+          variant="outlined"
+          type="password"
+          control={control}
+          defaultValue=""
+          rules={{ required: true }}
+        />
+        <Button
+          type="submit"
+          color="primary"
+          variant="contained"
+          disableElevation
+          fullWidth
+        >
+          登录
+        </Button>
+        <Button variant="contained" disableElevation fullWidth>
+          注册
+        </Button>
+      </form>
+      <Divider />
+      <Typography variant="subtitle2">第三方账号登录</Typography>
+      <div>
+        <IconButton onClick={() => thirdPartLogin("github")}>
+          <GitHubIcon />
+        </IconButton>
       </div>
-    </div>
+    </Paper>
   );
 };
 

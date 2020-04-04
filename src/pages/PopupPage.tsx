@@ -1,59 +1,117 @@
+import { CircularProgress, InputBase, CssBaseline } from "@material-ui/core";
 import {
-  classNamesFunction,
-  loadTheme,
-  SearchBox,
-  Spinner,
-  styled
-} from "@fluentui/react";
+  createStyles,
+  fade,
+  makeStyles,
+  Theme,
+} from "@material-ui/core/styles";
+import { Search as SearchIcon } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import { useMedia } from "react-use";
 
 import { bingTranslate } from "../api/translate";
 import { Word } from "../api/word";
 import TransContent from "../components/Translate/TransContent";
-import { darkTheme } from "../theme/dark";
-import { lightTheme } from "../theme/light";
-import { styles } from "./Page.styles";
-import { IPageProps, IPageStyleProps, IPageStyles } from "./Page.types";
 
-const getClassNames = classNamesFunction<IPageStyleProps, IPageStyles>();
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      background: theme.palette.background.default,
+      minWidth: 280,
+      padding: theme.spacing(2),
+    },
+    search: {
+      position: "relative",
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      "&:hover": {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      marginRight: theme.spacing(2),
+      marginLeft: 0,
+      width: "100%",
+    },
+    searchIcon: {
+      padding: theme.spacing(0, 2),
+      height: "100%",
+      position: "absolute",
+      pointerEvents: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    inputRoot: {
+      color: "inherit",
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 0),
+      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      width: "100%",
+    },
+    progressWrapper: {
+      marginTop: theme.spacing(2),
+      textAlign: "center",
+    },
+    contentWrapper: {
+      marginTop: theme.spacing(2),
+    },
+  })
+);
 
-const PopupPage: React.FC<IPageProps> = ({ theme, styles }) => {
+const PopupPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [word, setWord] = useState<Word | null>(null);
-  const isDark = useMedia("(prefers-color-scheme: dark)");
+  const [inputText, setInputText] = useState<string>("");
 
-  useEffect(() => {
-    if (isDark) {
-      loadTheme(darkTheme);
-    } else {
-      loadTheme(lightTheme);
-    }
-  }, [isDark]);
+  const classes = useStyles();
 
   const translate = async (text: string) => {
+    if (!text) return;
     setLoading(true);
     const word = await bingTranslate(text);
     setWord(word);
     setLoading(false);
   };
 
-  const classNames = getClassNames(styles, { theme: theme! });
-
   return (
-    <div className={classNames.root}>
-      <SearchBox
-        styles={{ root: { width: 260 } }}
-        placeholder="Search Word"
-        onSearch={translate}
-      />
-      {loading && <Spinner label="loading" />}
-      {word && <TransContent word={word} />}
-    </div>
+    <>
+      <CssBaseline />
+      <div className={classes.root}>
+        <div className={classes.search}>
+          <div className={classes.searchIcon}>
+            <SearchIcon />
+          </div>
+          <InputBase
+            autoFocus
+            placeholder="Search Word"
+            classes={{
+              root: classes.inputRoot,
+              input: classes.inputInput,
+            }}
+            onChange={(e) => {
+              setInputText(e.target.value);
+            }}
+            value={inputText}
+            inputProps={{ "aria-label": "search word" }}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                translate(inputText);
+              }
+            }}
+          />
+        </div>
+        {loading && (
+          <div className={classes.progressWrapper}>
+            <CircularProgress />
+          </div>
+        )}
+        {word && (
+          <div className={classes.contentWrapper}>
+            <TransContent word={word} />
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
-export default styled<IPageProps, IPageStyleProps, IPageStyles>(
-  PopupPage,
-  styles
-);
+export default PopupPage;

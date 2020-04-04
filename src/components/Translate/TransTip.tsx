@@ -1,15 +1,12 @@
-import { Callout, Spinner } from "@fluentui/react";
-import React, { useEffect } from "react";
-import { loadTheme } from "@fluentui/react";
-import { useMedia } from "react-use";
-
-import { darkTheme } from "../../theme/dark";
-import { lightTheme } from "../../theme/light";
+import { CircularProgress, Fab, RootRef } from "@material-ui/core";
+import Popover from "@material-ui/core/Popover";
+import ScopedCssBaseline from "@material-ui/core/ScopedCssBaseline";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import TranslateIcon from "@material-ui/icons/Translate";
+import React from "react";
 
 import { useBingTranslate } from "../../hooks/translate/useBingTranslate";
 import TransContent from "./TransContent";
-import translateIcon from "./Translate.svg";
-import styles from "./TransTip.module.scss";
 
 interface ITranslateTipProps {
   top: number;
@@ -17,55 +14,74 @@ interface ITranslateTipProps {
   text: string;
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      position: "fixed",
+      zIndex: 2147483647,
+    },
+    wrapper: {
+      position: "relative",
+    },
+    fabProgress: {
+      position: "absolute",
+      top: -6,
+      left: -6,
+      zIndex: 1,
+    },
+  })
+);
+
 const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
   const { word, loading, reFetch } = useBingTranslate(text, false);
   const [visible, setVisible] = React.useState<boolean>(false);
-  const tipRef = React.useRef<HTMLDivElement>(null);
-  const isDark = useMedia("(prefers-color-scheme: dark)");
+  const tipRef = React.useRef<Element>(null);
 
-  useEffect(() => {
-    if (isDark) {
-      loadTheme(darkTheme);
-    } else {
-      loadTheme(lightTheme);
-    }
-  }, [isDark]);
+  const classes = useStyles();
 
   return (
-    <>
+    <ScopedCssBaseline>
       <div
+        className={classes.root}
         style={{
           top,
-          left
-        }}
-        ref={tipRef}
-        className={styles.tip}
-        onClick={() => {
-          !loading && reFetch();
-          !visible && setVisible(true);
+          left,
         }}
       >
-        {loading ? (
-          <Spinner />
-        ) : (
-          <img
-            src={chrome.runtime.getURL(translateIcon)}
-            alt="translate icon"
-          ></img>
-        )}
+        <div className={classes.wrapper}>
+          <RootRef rootRef={tipRef}>
+            <Fab
+              size="small"
+              color="primary"
+              onClick={() => {
+                !loading && reFetch();
+                !visible && setVisible(true);
+              }}
+            >
+              <TranslateIcon />
+            </Fab>
+          </RootRef>
+          {loading && (
+            <CircularProgress size={52} className={classes.fabProgress} />
+          )}
+        </div>
       </div>
-      {word && visible && !loading ? (
-        <Callout
-          className={styles.callout}
-          role="translate dialog"
-          gapSpace={10}
-          target={tipRef.current}
-          onDismiss={() => setVisible(false)}
-        >
-          <TransContent word={word} />
-        </Callout>
-      ) : null}
-    </>
+      <Popover
+        onClose={() => setVisible(false)}
+        open={!!(word && visible && !loading)}
+        anchorEl={tipRef.current}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        {word && <TransContent word={word} />}
+      </Popover>
+    </ScopedCssBaseline>
   );
 };
 
