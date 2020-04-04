@@ -1,4 +1,9 @@
 import { createTheme } from "@fluentui/react";
+import {
+  createMuiTheme,
+  makeStyles,
+  ThemeProvider
+} from "@material-ui/core/styles";
 
 export const lightTheme = createTheme({
   palette: {
@@ -24,5 +29,26 @@ export const lightTheme = createTheme({
     neutralDark: "#201f1e",
     black: "#000000",
     white: "#ffffff"
+  }
+});
+
+export const materialLightTheme = createMuiTheme({
+  palette: {
+    secondary: {
+      main: "#127bc4",
+      light: "rgb(65, 149, 207)",
+      dark: "rgb(12, 86, 137)",
+      contrastText: "#fff"
+    },
+    type: "light",
+    background: {
+      default: "#fff"
+    },
+    primary: {
+      main: "#d63947",
+      light: "rgb(222, 96, 107)",
+      dark: "rgb(149, 39, 49)",
+      contrastText: "#fff"
+    }
   }
 });

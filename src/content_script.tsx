@@ -1,15 +1,44 @@
+import { ApolloProvider } from "@apollo/react-hooks";
+import { ThemeProvider } from "@material-ui/core";
+import {
+  StylesProvider,
+  createGenerateClassName,
+} from "@material-ui/core/styles";
+import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
-import _ from "lodash";
-import { initializeIcons } from "@uifabric/icons";
+import { useMedia } from "react-use";
 
-import TransTip from "./components/Translate/TransTip";
-import { ApolloProvider } from "@apollo/react-hooks";
 import { authorizedClient } from "./common/graphql";
-
-initializeIcons(chrome.runtime.getURL("/fonts/"));
+import TransTip from "./components/Translate/TransTip";
+import { materialDarkTheme } from "./theme/dark";
+import { materialLightTheme } from "./theme/light";
 
 const INJECT_ELEMENT_ID = "___NO__WORLD___";
+
+interface IContentScriptAppProps {
+  top: number;
+  left: number;
+  text: string;
+}
+
+const generateClassName = createGenerateClassName({
+  productionPrefix: "NoWord",
+  seed: "__no__word__extension__",
+});
+
+const App: React.FC<IContentScriptAppProps> = ({ top, left, text }) => {
+  const isDark = useMedia("(prefers-color-scheme: dark)");
+  return (
+    <ApolloProvider client={authorizedClient}>
+      <StylesProvider generateClassName={generateClassName}>
+        <ThemeProvider theme={isDark ? materialDarkTheme : materialLightTheme}>
+          <TransTip top={top} left={left} text={text} />
+        </ThemeProvider>
+      </StylesProvider>
+    </ApolloProvider>
+  );
+};
 
 const injectElement = (top: number, left: number) => {
   const selection = document.getSelection();
@@ -46,12 +75,7 @@ const injectElement = (top: number, left: number) => {
     document.body.appendChild(el);
   }
 
-  ReactDOM.render(
-    <ApolloProvider client={authorizedClient}>
-      <TransTip top={top} left={left} text={text} />
-    </ApolloProvider>,
-    el
-  );
+  ReactDOM.render(<App top={top} left={left} text={text} />, el);
 };
 
 const onMouseUp = (e: MouseEvent) => {
@@ -59,7 +83,8 @@ const onMouseUp = (e: MouseEvent) => {
   if (path.length > 0) {
     const firstTagName = _.get(path, "[0].tagName", "");
     if (firstTagName === "INPUT" || firstTagName === "TEXTAREA") return;
-    if (path.findIndex(e => _.get(e, "id") === INJECT_ELEMENT_ID) >= 0) return;
+    if (path.findIndex((e) => _.get(e, "id") === INJECT_ELEMENT_ID) >= 0)
+      return;
     let left = Math.min(e.clientX + 30, window.innerWidth - 30);
     let top = Math.max(0, e.clientY - 30);
     injectElement(top, left);

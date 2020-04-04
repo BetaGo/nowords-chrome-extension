@@ -1,93 +1,106 @@
-import { Icon, Text } from "@fluentui/react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Grid,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import MicIcon from "@material-ui/icons/Mic";
 import React from "react";
 
 import { Word } from "../../api/word";
 import { MessageType } from "../../common/Message";
 import Operation from "./Operation";
-import styles from "./TransContent.module.scss";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      minWidth: 350,
+      maxWidth: 500,
+      maxHeight: 600,
+      overflow: "auto",
+
+      "& .NoWord-MuiCardHeader-root": {
+        paddingBottom: 0,
+      },
+    },
+  })
+);
 
 const TransContent: React.FC<{ word: Word }> = ({ word }) => {
+  const classes = useStyles();
+
   const playWordAudio = (audioUrl: string) => {
     chrome.runtime.sendMessage({
       type: MessageType.playAudio,
-      payload: audioUrl
+      payload: audioUrl,
     });
   };
 
-  if (!word.means.length) {
-    return <div className={styles.root}>对不起,没有查到相关翻译.</div>;
-  }
   return (
-    <div className={styles.root}>
-      <div className={styles.header}>
-        <Text variant="xLarge">{word.text}</Text>
-        <Operation word={word.text} />
-      </div>
-      <div className={styles.block}>
-        {word.phonetic.en && (
-          <Text block variant="medium">
-            <span>EN:</span>
-            {word.phonetic.en.text && <span>【{word.phonetic.en.text}】</span>}
-            {word.phonetic.en.mediaUrl && (
-              <Icon
-                className={styles.pointer}
-                iconName="Volume2"
-                onClick={() => playWordAudio(word.phonetic.en!.mediaUrl!)}
-              />
+    <Card className={classes.root}>
+      <CardHeader
+        action={<Operation word={word.text} />}
+        title={word.text}
+        subheader={
+          <div>
+            {word.phonetic.en && (
+              <Typography color="textSecondary" variant="body2">
+                <span>EN:</span>
+                {word.phonetic.en.text && (
+                  <span>【{word.phonetic.en.text}】</span>
+                )}
+                {word.phonetic.en.mediaUrl && (
+                  <IconButton
+                    size="small"
+                    onClick={() => playWordAudio(word.phonetic.en!.mediaUrl!)}
+                  >
+                    <MicIcon />
+                  </IconButton>
+                )}
+              </Typography>
             )}
-          </Text>
-        )}
-        {word.phonetic.us && (
-          <Text block variant="medium">
-            <span>US:</span>
-            {word.phonetic.us.text && <span>【{word.phonetic.us.text}】</span>}
-            {word.phonetic.us.mediaUrl && (
-              <Icon
-                className={styles.pointer}
-                iconName="Volume2"
-                onClick={() => playWordAudio(word.phonetic.us!.mediaUrl!)}
-              />
+            {word.phonetic.us && (
+              <Typography color="textSecondary" variant="body2">
+                <span>US:</span>
+                {word.phonetic.us.text && (
+                  <span>【{word.phonetic.us.text}】</span>
+                )}
+                {word.phonetic.us.mediaUrl && (
+                  <IconButton
+                    size="small"
+                    onClick={() => playWordAudio(word.phonetic.us!.mediaUrl!)}
+                  >
+                    <MicIcon />
+                  </IconButton>
+                )}
+              </Typography>
             )}
-          </Text>
+          </div>
+        }
+      />
+      <CardContent>
+        {word.means.length !== 0 ? (
+          word.means.map((v) => (
+            <Typography variant="body2" gutterBottom>
+              <Grid container justify="center" alignItems="center">
+                <Grid item xs={2}>
+                  <Chip label={v.label} size="small" color="secondary" />{" "}
+                </Grid>
+                <Grid item xs={10}>
+                  {v.content.join("；")}
+                </Grid>
+              </Grid>
+            </Typography>
+          ))
+        ) : (
+          <Typography>对不起,没有查到相关翻译.</Typography>
         )}
-      </div>
-      {word.means.length !== 0 && (
-        <div className={`${styles.block} ${styles.means}`}>
-          <Text block variant="large">
-            单词释义:
-          </Text>
-          {word.means.map(v => (
-            <Text block variant="medium" className={styles.row}>
-              <span className={styles.label}>{v.label}</span>
-              <span>{v.content.join("；")}</span>
-            </Text>
-          ))}
-        </div>
-      )}
-      {word.advancedMeans.length !== 0 && (
-        <div className={styles.block}>
-          <Text block variant="large">
-            详细释义:
-          </Text>
-          {word.advancedMeans.map(v => (
-            <div className={styles.row}>
-              <Text block variant="mediumPlus">
-                {v.label}
-              </Text>
-              <div>
-                {v.content.map(c => (
-                  <Text block variant="medium">
-                    <div>{c.mean}</div>
-                    {c.sample && <div>{c.sample}</div>}
-                    {c.translatedSample && <div>{c.translatedSample}</div>}
-                  </Text>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

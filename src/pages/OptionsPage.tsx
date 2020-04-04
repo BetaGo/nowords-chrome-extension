@@ -1,37 +1,37 @@
-import { classNamesFunction, loadTheme, styled } from "@fluentui/react";
+import { CssBaseline } from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import React, { useEffect } from "react";
-import { useMedia, useSearchParam } from "react-use";
+import { useSearchParam } from "react-use";
 
 import Login from "../components/Options/Login";
 import { useLoginStatus } from "../hooks/useLoginStatus";
-import { darkTheme } from "../theme/dark";
-import { lightTheme } from "../theme/light";
-import { styles } from "./Page.styles";
-import { IPageProps, IPageStyleProps, IPageStyles } from "./Page.types";
 
-const getClassNames = classNamesFunction<IPageStyleProps, IPageStyles>();
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: "flex",
+      alignContent: "center",
+      justifyContent: "center",
+      background: theme.palette.background.default,
+      width: "100%",
+      height: "100%",
+    },
+  })
+);
 
-const OptionsPage: React.FC<IPageProps> = ({ theme, styles }) => {
-  const isLogin = useLoginStatus();
+const OptionsPage = () => {
+  const { isLogin, loading: isLoadingLoginStatus } = useLoginStatus();
 
   const accessToken = useSearchParam("accessToken");
   const refreshToken = useSearchParam("refreshToken");
-  const isDark = useMedia("(prefers-color-scheme: dark)");
-
-  useEffect(() => {
-    if (isDark) {
-      loadTheme(darkTheme);
-    } else {
-      loadTheme(lightTheme);
-    }
-  }, [isDark]);
+  const classes = useStyles();
 
   useEffect(() => {
     if (accessToken && refreshToken) {
       chrome.storage.sync.set(
         {
           accessToken,
-          refreshToken
+          refreshToken,
         },
         () => {
           window.history.replaceState({}, "", window.location.pathname);
@@ -40,17 +40,16 @@ const OptionsPage: React.FC<IPageProps> = ({ theme, styles }) => {
     }
   }, [accessToken, refreshToken]);
 
-  const classNames = getClassNames(styles, { theme: theme! });
+  if (isLoadingLoginStatus) return null;
 
-  if (!isLogin) return <Login />;
   return (
-    <div className={classNames.root}>
-      {isLogin ? <div>配置页</div> : <Login />}
-    </div>
+    <>
+      <CssBaseline />
+      <div className={classes.root}>
+        {isLogin ? <div>配置页</div> : <Login />}
+      </div>
+    </>
   );
 };
 
-export default styled<IPageProps, IPageStyleProps, IPageStyles>(
-  OptionsPage,
-  styles
-);
+export default OptionsPage;
