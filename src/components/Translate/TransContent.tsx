@@ -6,6 +6,7 @@ import {
   Grid,
   IconButton,
   Typography,
+  CardProps,
 } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import MicIcon from "@material-ui/icons/Mic";
@@ -14,6 +15,10 @@ import React from "react";
 import { Word } from "../../api/word";
 import { MessageType } from "../../common/Message";
 import Operation from "./Operation";
+
+type ITransContentProps = Partial<CardProps> & {
+  word: Word;
+};
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const TransContent: React.FC<{ word: Word }> = ({ word }) => {
+const TransContent: React.FC<ITransContentProps> = ({ word, ...restProps }) => {
   const classes = useStyles();
 
   const playWordAudio = (audioUrl: string) => {
@@ -41,7 +46,7 @@ const TransContent: React.FC<{ word: Word }> = ({ word }) => {
   };
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} {...restProps}>
       <CardHeader
         action={<Operation word={word.text} />}
         title={word.text}

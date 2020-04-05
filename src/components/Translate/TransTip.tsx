@@ -12,6 +12,7 @@ interface ITranslateTipProps {
   top: number;
   left: number;
   text: string;
+  onRemove: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,10 +33,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
+const TransTip: React.FC<ITranslateTipProps> = ({
+  top,
+  left,
+  text,
+  onRemove,
+}) => {
   const { word, loading, reFetch } = useBingTranslate(text, false);
   const [visible, setVisible] = React.useState<boolean>(false);
+
   const tipRef = React.useRef<Element>(null);
+  const rootRef = React.useRef<HTMLDivElement>(null);
 
   const classes = useStyles();
 
@@ -47,6 +55,7 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
           top,
           left,
         }}
+        ref={rootRef}
       >
         <div className={classes.wrapper}>
           <RootRef rootRef={tipRef}>
@@ -65,22 +74,26 @@ const TransTip: React.FC<ITranslateTipProps> = ({ top, left, text }) => {
             <CircularProgress size={52} className={classes.fabProgress} />
           )}
         </div>
+        <Popover
+          container={() => rootRef.current}
+          onClose={() => {
+            setVisible(false);
+            onRemove();
+          }}
+          open={!!(word && visible && !loading)}
+          anchorEl={tipRef.current}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          {word && <TransContent word={word} />}
+        </Popover>
       </div>
-      <Popover
-        onClose={() => setVisible(false)}
-        open={!!(word && visible && !loading)}
-        anchorEl={tipRef.current}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-      >
-        {word && <TransContent word={word} />}
-      </Popover>
     </ScopedCssBaseline>
   );
 };
