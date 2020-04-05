@@ -26,6 +26,9 @@ interface IOperationProps {
 const Operation: React.FC<IOperationProps> = ({ word }) => {
   const { isLogin } = useLoginStatus();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const rootRef = React.useRef<HTMLDivElement>(null);
+
   const open = Boolean(anchorEl);
 
   const [addNewWord, { loading, error, data }] = useMutation<
@@ -63,11 +66,16 @@ const Operation: React.FC<IOperationProps> = ({ word }) => {
   };
 
   return (
-    <div>
+    <div ref={rootRef}>
       <IconButton onClick={handleClick}>
         <MoreVertIcon />
       </IconButton>
-      <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
+      <Menu
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        container={() => rootRef.current}
+      >
         <MenuItem onClick={handleAddNewWord} disabled={!isLogin || loading}>
           <ListItemIcon>
             <StarBorderIcon />
