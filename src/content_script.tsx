@@ -7,11 +7,11 @@ import {
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
-import { useMedia } from "react-use";
 
 import { authorizedClient } from "./common/graphql";
 import ShadowDom from "./components/ShadowDom/ShadowDom";
 import TransTip from "./components/Translate/TransTip";
+import { useThemeMode } from "./hooks/useThemeMode";
 import { csMaterialDarkTheme } from "./theme/dark";
 import { csMaterialLightTheme } from "./theme/light";
 
@@ -35,12 +35,14 @@ const App: React.FC<IContentScriptAppProps> = ({
   text,
   onRemove,
 }) => {
-  const isDark = useMedia("(prefers-color-scheme: dark)");
+  const themeMode = useThemeMode();
   return (
     <ApolloProvider client={authorizedClient}>
       <StylesProvider generateClassName={generateClassName}>
         <ThemeProvider
-          theme={isDark ? csMaterialDarkTheme : csMaterialLightTheme}
+          theme={
+            themeMode === "dark" ? csMaterialDarkTheme : csMaterialLightTheme
+          }
         >
           <ShadowDom>
             <TransTip top={top} left={left} text={text} onRemove={onRemove} />

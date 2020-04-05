@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useSearchParam } from "react-use";
 
 import Login from "../components/Options/Login";
+import Options from "../components/Options/Options";
 import { useLoginStatus } from "../hooks/useLoginStatus";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -45,9 +46,7 @@ const OptionsPage = () => {
   return (
     <>
       <CssBaseline />
-      <div className={classes.root}>
-        {isLogin ? <div>配置页</div> : <Login />}
-      </div>
+      <div className={classes.root}>{isLogin ? <Options /> : <Login />}</div>
     </>
   );
 };

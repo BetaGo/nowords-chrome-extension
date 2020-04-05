@@ -19,6 +19,7 @@
     "apollo-boost": "^0.4.7",
     "cheerio": "^1.0.0-rc.3",
     "chromium-extension-react-scripts": "0.0.5",
+    "eventemitter3": "^4.0.0",
     "graphql": "^14.6.0",
     "jsencrypt": "^3.0.0-rc.1",
     "jwt-decode": "^2.2.0",
