@@ -22,8 +22,8 @@ export class Settings {
   private readonly _changeEventName = "settingsChange";
 
   private constructor() {
-    this.loadSettings();
     this._EE = new EventEmitter();
+    this.loadSettings();
   }
 
   public static getInstance() {
