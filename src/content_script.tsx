@@ -104,7 +104,10 @@ const onMouseUp = (e: MouseEvent) => {
     }
     let left = Math.min(e.clientX + 30, window.innerWidth - 30);
     let top = Math.max(0, e.clientY - 30);
-    injectElement(top, left);
+
+    setTimeout(() => {
+      injectElement(top, left);
+    }, 0);
   }
 };
 
