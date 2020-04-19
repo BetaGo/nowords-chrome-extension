@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import { useLocation } from "react-use";
 
 export const useLoginStatus = () => {
@@ -7,7 +7,7 @@ export const useLoginStatus = () => {
 
   const state = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, (items) => {
       if (items.accessToken && items.refreshToken) {
         setIsLogin(true);

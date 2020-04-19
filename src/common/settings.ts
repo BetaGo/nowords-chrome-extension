@@ -34,7 +34,7 @@ export class Settings {
     return Settings.instance;
   }
 
-  async loadSettings() {
+  loadSettings = () => {
     return new Promise((resolve) => {
       chrome.storage.sync.get({ settings: "" }, (items) => {
         try {
@@ -46,7 +46,7 @@ export class Settings {
         resolve(items.settings);
       });
     });
-  }
+  };
 
   get<K extends keyof ISettingsConfig>(
     key: K,

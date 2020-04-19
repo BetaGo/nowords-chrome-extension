@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 
 import { Settings, ISettingsConfig, IConfigCallback } from "../common/settings";
 
 export const useSettings = () => {
-  const settingsInstanceRef = useRef<Settings | null>(null);
+  const settingsInstanceRef = useRef<Settings>(Settings.getInstance());
 
   const [allSettings, setAllSettings] = useState<ISettingsConfig | undefined>(
     settingsInstanceRef.current?.getAll()
@@ -20,11 +20,11 @@ export const useSettings = () => {
     settingsInstanceRef.current?.set(key, value);
   }
 
-  useEffect(() => {
-    settingsInstanceRef.current = Settings.getInstance();
-    settingsInstanceRef.current.addListener(handleSettingsChange);
-    return () =>
-      settingsInstanceRef.current?.removeListener(handleSettingsChange);
+  useLayoutEffect(() => {
+    const settingsInstance = settingsInstanceRef.current;
+    settingsInstance.addListener(handleSettingsChange);
+
+    return () => settingsInstance.removeListener(handleSettingsChange);
   }, []);
 
   return { settings: allSettings, setSetting };

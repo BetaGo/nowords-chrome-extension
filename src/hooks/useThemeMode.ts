@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useState, useLayoutEffect } from "react";
 import { useMedia } from "react-use";
 
 import { useSettings } from "./useSettings";
@@ -26,7 +26,7 @@ export const useThemeMode = () => {
     getThemeMode()
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const mode = getThemeMode();
     setThemeMode(mode);
   }, [getThemeMode, isSystemDark, settings]);
