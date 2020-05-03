@@ -13,12 +13,12 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { client } from "../../common/graphql";
-import { LoginToken } from "../../graphql/__generated__/LoginToken";
+import { EncryptToken } from "../../graphql/__generated__/EncryptToken";
 import {
   UserLogin,
   UserLoginVariables,
 } from "../../graphql/__generated__/UserLogin";
-import { LOGIN_TOKEN, USER_LOGIN } from "../../graphql/queries";
+import { ENCRYPT_TOKEN, USER_LOGIN } from "../../graphql/queries";
 
 interface ILoginInput {
   account: string;
@@ -64,16 +64,16 @@ const Login = () => {
   const classes = useStyles();
 
   const onSubmit = async (data: ILoginInput) => {
-    const tokenRes = await client.query<LoginToken>({
-      query: LOGIN_TOKEN,
+    const tokenRes = await client.query<EncryptToken>({
+      query: ENCRYPT_TOKEN,
     });
-    if (!tokenRes.data.loginToken) {
+    if (!tokenRes.data.encryptToken) {
       return;
     }
-    encrypt.setPublicKey(tokenRes.data.loginToken.publicKey);
+    encrypt.setPublicKey(tokenRes.data.encryptToken.publicKey);
     const encryptedPassword = encrypt.encrypt(
       JSON.stringify({
-        token: tokenRes.data.loginToken.token,
+        token: tokenRes.data.encryptToken.token,
         text: data.password,
       })
     );

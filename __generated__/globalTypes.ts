@@ -14,8 +14,8 @@ export interface AddUserWordInput {
 }
 
 export interface RefreshTokenInput {
-  refreshToken: string;
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface UserLoginInput {

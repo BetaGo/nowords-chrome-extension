@@ -1,8 +1,8 @@
 import { gql } from "apollo-boost";
 
-export const LOGIN_TOKEN = gql`
-  query LoginToken {
-    loginToken {
+export const ENCRYPT_TOKEN = gql`
+  query EncryptToken {
+    encryptToken {
       token
       publicKey
     }
@@ -10,7 +10,7 @@ export const LOGIN_TOKEN = gql`
 `;
 
 export const REFRESH_TOKEN = gql`
-  query RefreshToken($input: RefreshTokenInput) {
+  query RefreshToken($input: RefreshTokenInput!) {
     refreshToken(input: $input) {
       accessToken
       refreshToken
@@ -19,7 +19,7 @@ export const REFRESH_TOKEN = gql`
 `;
 
 export const USER_LOGIN = gql`
-  query UserLogin($input: UserLoginInput) {
+  query UserLogin($input: UserLoginInput!) {
     userLogin(input: $input) {
       accessToken
       refreshToken

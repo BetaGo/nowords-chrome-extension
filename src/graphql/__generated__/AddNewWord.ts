@@ -15,7 +15,7 @@ export interface AddNewWord_addUserWord {
 }
 
 export interface AddNewWord {
-  addUserWord: AddNewWord_addUserWord | null;
+  addUserWord: AddNewWord_addUserWord;
 }
 
 export interface AddNewWordVariables {

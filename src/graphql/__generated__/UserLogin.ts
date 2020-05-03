@@ -10,15 +10,15 @@ import { UserLoginInput } from "./../../../__generated__/globalTypes";
 // ====================================================
 
 export interface UserLogin_userLogin {
-  __typename: "UserLoginPayload";
+  __typename: "AuthorizationToken";
   accessToken: string;
   refreshToken: string;
 }
 
 export interface UserLogin {
-  userLogin: UserLogin_userLogin | null;
+  userLogin: UserLogin_userLogin;
 }
 
 export interface UserLoginVariables {
-  input?: UserLoginInput | null;
+  input: UserLoginInput;
 }

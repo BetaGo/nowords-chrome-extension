@@ -10,15 +10,15 @@ import { RefreshTokenInput } from "./../../../__generated__/globalTypes";
 // ====================================================
 
 export interface RefreshToken_refreshToken {
-  __typename: "RefreshTokenPayload";
+  __typename: "AuthorizationToken";
   accessToken: string;
   refreshToken: string;
 }
 
 export interface RefreshToken {
-  refreshToken: RefreshToken_refreshToken | null;
+  refreshToken: RefreshToken_refreshToken;
 }
 
 export interface RefreshTokenVariables {
-  input?: RefreshTokenInput | null;
+  input: RefreshTokenInput;
 }
