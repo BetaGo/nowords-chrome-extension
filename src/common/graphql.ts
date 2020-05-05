@@ -57,8 +57,11 @@ export const authorizedClient = new ApolloClient({
     });
   },
   onError(errors) {
-    const { networkError } = errors;
-    if (networkError?.message.includes("Unauthorized")) {
+    const { networkError, graphQLErrors } = errors;
+    if (
+      networkError?.message.includes("Unauthorized") ||
+      graphQLErrors?.some((v) => v.message.includes("Unauthorized"))
+    ) {
       chrome.storage.sync.remove(["accessToken", "refreshToken"], () => {
         const message: IMessage = {
           type: MessageType.openOptionsPage,
