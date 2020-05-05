@@ -1,22 +1,24 @@
 import ApolloClient from "apollo-boost";
 import jwtDecode from "jwt-decode";
+import _ from "lodash";
 
 import {
   RefreshToken,
-  RefreshTokenVariables
+  RefreshTokenVariables,
 } from "../graphql/__generated__/RefreshToken";
 import { REFRESH_TOKEN } from "../graphql/queries";
 import { IJwtTokenObj } from "../types";
+import { IMessage, MessageType } from "./Message";
 
 export const client = new ApolloClient({
-  uri: process.env.REACT_APP_GRAPHQL_HTTP_URI
+  uri: process.env.REACT_APP_GRAPHQL_HTTP_URI,
 });
 
 export const authorizedClient = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_HTTP_URI,
-  request: async operation => {
-    const tokens = await new Promise<any>(resolve => {
-      chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, function(
+  request: async (operation) => {
+    const tokens = await new Promise<any>((resolve) => {
+      chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, function (
         items
       ) {
         resolve(items);
@@ -35,23 +37,34 @@ export const authorizedClient = new ApolloClient({
           variables: {
             input: {
               accessToken,
-              refreshToken
-            }
-          }
+              refreshToken,
+            },
+          },
         });
         accessToken = res.data.refreshToken?.accessToken;
         refreshToken = res.data.refreshToken?.refreshToken;
         chrome.storage.sync.set({
           accessToken,
-          refreshToken
+          refreshToken,
         });
       }
     }
 
     operation.setContext({
       headers: {
-        authorization: accessToken ? `Bearer ${accessToken}` : ""
-      }
+        authorization: accessToken ? `Bearer ${accessToken}` : "",
+      },
     });
-  }
+  },
+  onError(errors) {
+    const { networkError } = errors;
+    if (networkError?.message.includes("Unauthorized")) {
+      chrome.storage.sync.remove(["accessToken", "refreshToken"], () => {
+        const message: IMessage = {
+          type: MessageType.openOptionsPage,
+        };
+        chrome.runtime.sendMessage(message);
+      });
+    }
+  },
 });
