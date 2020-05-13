@@ -72,6 +72,12 @@ const injectElement = (top: number, left: number) => {
     return;
   }
 
+  // 仅支持英文翻译
+  if (!/\w+/.test(text)) {
+    removeElement();
+    return;
+  }
+
   if (el) {
     if (el.getAttribute("data-text") !== text) {
       removeElement();
