@@ -24,7 +24,6 @@
     "jsencrypt": "^3.0.0-rc.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
-    "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^5.1.3",
