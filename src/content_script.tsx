@@ -73,7 +73,7 @@ const injectElement = (top: number, left: number) => {
   }
 
   // 仅支持英文翻译
-  if (!/\w+/.test(text)) {
+  if (!/^\w+\w$/.test(text)) {
     removeElement();
     return;
   }
