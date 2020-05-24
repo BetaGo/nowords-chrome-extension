@@ -26,3 +26,17 @@ export const USER_LOGIN = gql`
     }
   }
 `;
+
+export const USER_WORD = gql`
+  query UserWord($word: String!) {
+    userWord(word: $word) {
+      word
+      example
+      translation
+      exp
+      forgottenTimes
+      rememberTimes
+      isKnown
+    }
+  }
+`;

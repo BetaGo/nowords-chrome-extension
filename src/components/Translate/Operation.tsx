@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/react-hooks";
+import { useMutation, useLazyQuery } from "@apollo/react-hooks";
 import {
   IconButton,
   ListItemIcon,
@@ -8,8 +8,9 @@ import {
 } from "@material-ui/core";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
+import StarIcon from "@material-ui/icons/Star";
 import SettingsIcon from "@material-ui/icons/Settings";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { IMessage, MessageType } from "../../common/Message";
 import {
@@ -18,6 +19,11 @@ import {
 } from "../../graphql/__generated__/AddNewWord";
 import { ADD_NEW_WORD } from "../../graphql/mutations";
 import { useLoginStatus } from "../../hooks/useLoginStatus";
+import { USER_WORD } from "../../graphql/queries";
+import {
+  UserWord,
+  UserWordVariables,
+} from "../../graphql/__generated__/UserWord";
 
 interface IOperationProps {
   word: string;
@@ -26,8 +32,22 @@ interface IOperationProps {
 const Operation: React.FC<IOperationProps> = ({ word }) => {
   const { isLogin } = useLoginStatus();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [
+    loadUserWord,
+    { data: userWordData, refetch: refetchUserWord },
+  ] = useLazyQuery<UserWord, UserWordVariables>(USER_WORD);
 
   const rootRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isLogin) {
+      loadUserWord({
+        variables: {
+          word,
+        },
+      });
+    }
+  }, [isLogin, word, loadUserWord]);
 
   const open = Boolean(anchorEl);
 
@@ -44,6 +64,9 @@ const Operation: React.FC<IOperationProps> = ({ word }) => {
         },
       },
     }).then(() => {
+      refetchUserWord({
+        word,
+      });
       handleClose();
     });
   };
@@ -76,11 +99,18 @@ const Operation: React.FC<IOperationProps> = ({ word }) => {
         onClose={handleClose}
         container={() => rootRef.current}
       >
-        <MenuItem onClick={handleAddNewWord} disabled={!isLogin || loading}>
+        <MenuItem
+          onClick={handleAddNewWord}
+          disabled={!isLogin || loading || !!userWordData?.userWord}
+        >
           <ListItemIcon>
-            <StarBorderIcon />
+            {userWordData?.userWord ? <StarIcon /> : <StarBorderIcon />}
           </ListItemIcon>
-          <Typography variant="inherit">添加到生词本</Typography>
+          {userWordData?.userWord ? (
+            <Typography variant="inherit">已在生词本</Typography>
+          ) : (
+            <Typography variant="inherit">添加到生词本</Typography>
+          )}
         </MenuItem>
         <MenuItem onClick={openOptionsPage}>
           <ListItemIcon>
