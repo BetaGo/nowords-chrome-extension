@@ -40,3 +40,12 @@ export const USER_WORD = gql`
     }
   }
 `;
+
+export const USER_INFO = gql`
+  query UserInfo {
+    user {
+      displayName
+      avatar
+    }
+  }
+`;

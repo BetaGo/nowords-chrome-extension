@@ -86,15 +86,10 @@ const Login = () => {
         },
       },
     });
-    chrome.storage.sync.set(
-      {
-        accessToken: loginRes.data.userLogin?.accessToken,
-        refreshToken: loginRes.data.userLogin?.refreshToken,
-      },
-      () => {
-        window.location.reload(false);
-      }
-    );
+    chrome.storage.sync.set({
+      accessToken: loginRes.data.userLogin?.accessToken,
+      refreshToken: loginRes.data.userLogin?.refreshToken,
+    });
   };
 
   return (

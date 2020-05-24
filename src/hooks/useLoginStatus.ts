@@ -1,11 +1,23 @@
-import { useState, useLayoutEffect } from "react";
-import { useLocation } from "react-use";
+import { useState, useLayoutEffect, useRef } from "react";
 
 export const useLoginStatus = () => {
   const [loading, setLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
 
-  const state = useLocation();
+  const storageChangeListenerRef = useRef((changes: any) => {
+    const accessTokenChange = changes.accessToken;
+    if (accessTokenChange) {
+      if (accessTokenChange.oldValue && !accessTokenChange.newValue) {
+        setIsLogin(false);
+      } else if (!accessTokenChange.oldValue && accessTokenChange.newValue) {
+        setIsLogin(true);
+      }
+    }
+  });
+
+  const logout = () => {
+    chrome.storage.sync.set({ accessToken: "", refreshToken: "" });
+  };
 
   useLayoutEffect(() => {
     chrome.storage.sync.get({ accessToken: "", refreshToken: "" }, (items) => {
@@ -17,7 +29,12 @@ export const useLoginStatus = () => {
         setLoading(false);
       }
     });
-  }, [state]);
 
-  return { isLogin, loading };
+    const listener = storageChangeListenerRef.current;
+    chrome.storage.onChanged.addListener(listener);
+
+    return () => chrome.storage.onChanged.removeListener(listener);
+  }, []);
+
+  return { isLogin, loading, logout };
 };

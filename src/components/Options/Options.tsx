@@ -7,15 +7,23 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import React from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 
+import UserCard from "./UserCard";
+
 import { useSettings } from "../../hooks/useSettings";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      width: 360,
+      width: 640,
       margin: "auto",
       textAlign: "center",
       padding: theme.spacing(2),
+
+      "& > .MuiPaper-root": {
+        padding: theme.spacing(2),
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2),
+      },
     },
   })
 );
@@ -31,9 +39,12 @@ const Options = () => {
 
   return (
     <div className={classes.root}>
-      <Paper variant="outlined">
+      <Paper>
+        <UserCard />
+      </Paper>
+      <Paper>
         <FormControl component="fieldset">
-          <FormLabel component="legend">主题</FormLabel>
+          <FormLabel component="legend">颜色主题</FormLabel>
           <RadioGroup
             aria-label="theme"
             name="theme"
