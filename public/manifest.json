@@ -3,7 +3,7 @@
   "name": "no-words",
   "description": "更懂你的单词学习工具",
   "homepage_url": "https://nowords.gwthub.com",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icons": {
     "16": "images/icon192.png",
     "48": "images/icon192.png",
