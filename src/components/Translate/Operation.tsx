@@ -24,9 +24,10 @@ import {
   UserWord,
   UserWordVariables,
 } from "../../graphql/__generated__/UserWord";
+import { Word } from "../../api/word";
 
 interface IOperationProps {
-  word: string;
+  word: Word;
 }
 
 const Operation: React.FC<IOperationProps> = ({ word }) => {
@@ -43,7 +44,7 @@ const Operation: React.FC<IOperationProps> = ({ word }) => {
     if (isLogin) {
       loadUserWord({
         variables: {
-          word,
+          word: word.text,
         },
       });
     }
@@ -60,12 +61,15 @@ const Operation: React.FC<IOperationProps> = ({ word }) => {
     addNewWord({
       variables: {
         input: {
-          word,
+          word: word.text,
+          translation: word.means
+            .map((v) => `${v.label}: ${v.content}`)
+            .join("\n"),
         },
       },
     }).then(() => {
       refetchUserWord({
-        word,
+        word: word.text,
       });
       handleClose();
     });

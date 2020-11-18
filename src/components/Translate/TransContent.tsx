@@ -48,7 +48,7 @@ const TransContent: React.FC<ITransContentProps> = ({ word, ...restProps }) => {
   return (
     <Card className={classes.root} {...restProps}>
       <CardHeader
-        action={<Operation word={word.text} />}
+        action={<Operation word={word} />}
         title={word.text}
         subheader={
           <div>
